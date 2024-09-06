@@ -1,0 +1,140 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: ShoppingCart(),
+    );
+  }
+}
+
+class ShoppingCart extends StatefulWidget {
+  @override
+  _ShoppingCartState createState() => _ShoppingCartState();
+}
+
+class _ShoppingCartState extends State<ShoppingCart> {
+  int pulloverQuantity = 1;
+  int tShirtQuantity = 1;
+  int sportDressQuantity = 1;
+
+  final int pulloverPrice = 51;
+  final int tShirtPrice = 30;
+  final int sportDressPrice = 43;
+
+  int calculateTotal() {
+    return (pulloverQuantity * pulloverPrice) +
+        (tShirtQuantity * tShirtPrice) +
+        (sportDressQuantity * sportDressPrice);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('My Bag'),
+        backgroundColor: Colors.black,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            itemRow(
+                'Pullover', 'Black', 'L', pulloverPrice, pulloverQuantity, () {
+              setState(() {
+                if (pulloverQuantity > 1) pulloverQuantity--;
+              });
+            }, () {
+              setState(() {
+                pulloverQuantity++;
+              });
+            }),
+            itemRow('T-Shirt', 'Gray', 'L', tShirtPrice, tShirtQuantity, () {
+              setState(() {
+                if (tShirtQuantity > 1) tShirtQuantity--;
+              });
+            }, () {
+              setState(() {
+                tShirtQuantity++;
+              });
+            }),
+            itemRow('Sport Dress', 'Black', 'M', sportDressPrice,
+                sportDressQuantity, () {
+                  setState(() {
+                    if (sportDressQuantity > 1) sportDressQuantity--;
+                  });
+                }, () {
+                  setState(() {
+                    sportDressQuantity++;
+                  });
+                }),
+            Spacer(),
+            Text(
+              'Total amount: \$${calculateTotal()}',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text('Congratulations! You have checked out.'),
+                ));
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+              ),
+              child: Text('CHECK OUT', style: TextStyle(fontSize: 16)),
+            ),
+            SizedBox(height: 20),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget itemRow(String title, String color, String size, int price,
+      int quantity, VoidCallback onDecrease, VoidCallback onIncrease) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              Text('Color: $color  Size: $size'),
+            ],
+          ),
+          Row(
+            children: [
+              IconButton(
+                icon: Icon(Icons.remove_circle_outline),
+                onPressed: onDecrease,
+              ),
+              Text(
+                '$quantity',
+                style: TextStyle(fontSize: 18),
+              ),
+              IconButton(
+                icon: Icon(Icons.add_circle_outline),
+                onPressed: onIncrease,
+              ),
+            ],
+          ),
+          Text('\$$price'),
+        ],
+      ),
+    );
+  }
+}
